@@ -1,4 +1,4 @@
-#display the size that backup file occupies on a repository for every job together with the VM data size
+# display the size that backup files occupy on a repository for every job together with the VM data size
 # datasize sums up the amount of vm-data before dedupe and compression for each job, but also summarized accross all available restore points. 
 if ((Get-PSSnapin -Name VeeamPSSnapIn -ErrorAction SilentlyContinue) -eq $null) {
     Add-PsSnapin -Name VeeamPSSnapIn
