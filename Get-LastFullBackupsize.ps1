@@ -10,21 +10,27 @@ if ((Get-PSSnapin -Name VeeamPSSnapIn -ErrorAction SilentlyContinue) -eq $null) 
 
 }
 
-$getDatasize = $false
+$getDatasize = $true
 $jobObject = Get-VBRJob -Name $jobname
 $vmList = $jobObject.GetObjectsInJob().name
 $vmCount = $vmList.count
 
 Write-host "Getting VM statistics for $vmCount VMs. Please wait...."
-[int]$sum = 0
+[int]$sumDatasize = 0
+[int]$sumBackupsize = 0
 foreach ($vmname in $vmlist){
 
-if($getDatasize){
-  $lastFullSize = get-vbrrestorepoint | where-object {$_.IsFull -eq $true -and $_.vmname -eq $vmname} | select -last 1 | % {[math]::truncate($_.GetStorage().stats.Datasize / 1GB)}
-}else{
-  $lastFullSize = get-vbrrestorepoint | where-object {$_.IsFull -eq $true -and $_.vmname -eq $vmname} | select -last 1 | % {[math]::truncate($_.GetStorage().stats.Backupsize / 1GB)}
+$fullStats = get-vbrrestorepoint | where-object {$_.IsFull -eq $true -and $_.vmname -eq $vmname} | select -last 1 | % {$_.GetStorage().stats}
+$fullDataSize = [math]::truncate($fullStats.Datasize / 1GB)
+$fullBackupSize = [math]::truncate($fullStats.Backupsize / 1GB)
+
+$sumDatasize += [int]$fullDataSize
+$sumBackupsize += [int]$fullBackupSize
 }
-$sum += [int]$lastFullSize
-}
-Write-host "Total Full backup size(GB): " $sum
+[int]$reducedByPercentage = ($sumDatasize - $sumBackupsize) / $sumDatasize * 100
+$reducedByFactor = [math]::Round(($sumDatasize / $sumBackupsize),2)
+Write-host "Total Full (uncompressed) datasize(GB): " $sumDatasize
+Write-host "Total Full (compressed) backupsize(GB): " $sumBackupsize
+Write-host "Reduced by $reducedByPercentage % or factor $reducedByFactor"
+
 
