@@ -1,5 +1,7 @@
 #get the latest Full Backupsize or Datasize for a specific job.
 #using suggestions from https://forums.veeam.com/powershell-f26/list-vm-s-which-are-backed-up-by-job-t39525.html
+#To export to file, run seperate script for example with content
+#.\Get-LatestFullsize.ps1 -jobname "jobname" | out-file -filepath c:\veeamreports\backupsizes\jobname.txt -Append
 [CmdletBinding()]
 Param(
   [Parameter(Mandatory=$True,Position=1)]
