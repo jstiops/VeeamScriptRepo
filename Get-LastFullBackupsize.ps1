@@ -5,7 +5,7 @@ $vmList = ($job | Select @{n="vm";e={$_.GetObjectOibsAll() | %{@($_.name,"")}}} 
 [int]$sum = 0
 foreach ($vmname in $vmlist){
 
-if($getDatasize -eq &true){
+if($getDatasize){
   $lastFullSize = get-vbrrestorepoint | where-object {$_.IsFull -eq $true -and $_.vmname -eq $vmname} | select -last 1 | % {[math]::truncate($_.GetStorage().stats.Datasize / 1GB)}
 }else{
   $lastFullSize = get-vbrrestorepoint | where-object {$_.IsFull -eq $true -and $_.vmname -eq $vmname} | select -last 1 | % {[math]::truncate($_.GetStorage().stats.Backupsize / 1GB)}
