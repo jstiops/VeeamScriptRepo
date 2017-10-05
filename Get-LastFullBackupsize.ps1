@@ -1,4 +1,8 @@
 #get the latest Full Backupsize or Datasize for a specific job.
+if ((Get-PSSnapin -Name VeeamPSSnapIn -ErrorAction SilentlyContinue) -eq $null) {
+    Add-PsSnapin -Name VeeamPSSnapIn
+}
+
 $job = get-vbrbackup -Name "jobname"
 $getDatasize = $false
 $vmList = ($job | Select @{n="vm";e={$_.GetObjectOibsAll() | %{@($_.name,"")}}} | Select -ExpandProperty vm);
