@@ -1,6 +1,5 @@
 #get the latest Full Backupsize or Datasize for a specific job.
 #using suggestions from https://forums.veeam.com/powershell-f26/list-vm-s-which-are-backed-up-by-job-t39525.html
-
 [CmdletBinding()]
 Param(
   [Parameter(Mandatory=$True,Position=1)]
@@ -17,7 +16,7 @@ $vms_in_jobs = new-object System.Collections.ArrayList
 $allsessions = get-vbrbackupsession
 
 foreach ($job in $jobObject){
-    echo $job.name
+    #echo $job.name
     $vms_protected_by_job = $null
     $vms_protected_by_job = ($allsessions | where {($_.jobname -like $job.Name) -and ($_.name -notlike "*Retry*") } | sort-object CreationTimeUTC -Descending)[0] | get-vbrtasksession
     foreach ($vm_protected_by_job in $vms_protected_by_job){
@@ -32,11 +31,12 @@ foreach ($job in $jobObject){
 $vms_in_jobs_compare1 = $vms_in_jobs.name
 $vms_in_jobs_compare2 = $vms_in_jobs_compare1 | select -unique
 
-Compare-Object $vms_in_jobs_compare1 $vms_in_jobs_compare2
+#Compare-Object $vms_in_jobs_compare1 $vms_in_jobs_compare2
 $vmlist = $vms_in_jobs_compare2
 $vmCount = $vmList.count
 
-Write-host "Getting VM statistics for $vmCount VMs. Please wait...."
+Write-output "Getting VM statistics for $vmCount VMs. Please wait...."
+#$vmlist
 [int]$sumDatasize = 0
 [int]$sumBackupsize = 0
 foreach ($vmname in $vmlist){
@@ -50,9 +50,13 @@ $sumBackupsize += [int]$fullBackupSize
 }
 [int]$reducedByPercentage = ($sumDatasize - $sumBackupsize) / $sumDatasize * 100
 $reducedByFactor = [math]::Round(($sumDatasize / $sumBackupsize),2)
-Write-host "Total Full (uncompressed) datasize(GB): " $sumDatasize
-Write-host "Total Full (compressed) backupsize(GB): " $sumBackupsize
-Write-host "Reduced by $reducedByPercentage % or factor $reducedByFactor"
+Write-output "Job: $jobname"
+Write-output "Date: $(get-date)"
+Write-output "Total Full (uncompressed) datasize(GB): $sumDatasize" 
+Write-output "Total Full (compressed) backupsize(GB): $sumBackupsize" 
+Write-output "Reduced by $reducedByPercentage % or factor $reducedByFactor"
+Write-output "========"
+
 
 
 
