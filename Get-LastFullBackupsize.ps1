@@ -1,4 +1,4 @@
-
+#get the latest Full Backupsize or Datasize for a specific job.
 $job = get-vbrbackup -Name "jobname"
 $getDatasize = $false
 $vmList = ($job | Select @{n="vm";e={$_.GetObjectOibsAll() | %{@($_.name,"")}}} | Select -ExpandProperty vm);
