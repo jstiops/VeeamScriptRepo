@@ -1,4 +1,4 @@
-# display vbk file statistics for a specific job. displays Datasize and backupsize
+# display all vbk files statistics for a specific job. displays Datasize and backupsize
 if ((Get-PSSnapin -Name VeeamPSSnapIn -ErrorAction SilentlyContinue) -eq $null) {
     Add-PsSnapin -Name VeeamPSSnapIn
 }
